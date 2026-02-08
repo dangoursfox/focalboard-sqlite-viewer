@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  sqlite-viewer:
+    build: .
+    image: sqlite-viewer:latest
+    container_name: sqlite-viewer
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./db:/db
+      - ./config:/config
+    environment:
+      - AUTH_PATH=/config/auth.json
+    restart: unless-stopped

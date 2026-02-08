@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Table - SQLite Viewer</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f8f9fa; }
+        nav { background: #343a40; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: #ffc107; text-decoration: none; }
+        .container { padding: 2rem; }
+        h1 { color: #333; }
+        .info { margin-bottom: 1rem; color: #666; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background: #e9ecef; color: #495057; }
+        tr:hover { background: #f1f3f5; }
+        .no-data { text-align: center; padding: 2rem; color: #999; }
+    </style>
+</head>
+<body>
+    <nav>
+        <span>SQLite Viewer - Logged in as: <strong><%= user.username %></strong></span>
+        <a href="/logout">Logout</a>
+    </nav>
+    <div class="container">
+        <h1>Database Viewer</h1>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <form action="/set-db" method="POST" style="display: flex; gap: 10px; align-items: center;">
+                <label style="font-weight: bold; white-space: nowrap;">Database Path:</label>
+                <input type="text" name="dbPath" value="<%= (typeof dbPath !== 'undefined' ? dbPath : '') %>" placeholder="/path/to/your/database.db" style="flex-grow: 1; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px;" required>
+                <button type="submit" style="width: auto; padding: 0.6rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Connect</button>
+            </form>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p style="color: #dc3545; margin-top: 10px; font-size: 0.9rem;">⚠️ <%= error %></p>
+            <% } %>
+        </div>
+
+        <% if (typeof dbPath !== 'undefined' && dbPath) { %>
+            <h2>Users Table</h2>
+            <p class="info">Current File: <code><%= dbPath %></code> (Read-Only Mode)</p>
+            
+            <% if (Array.isArray(rows) && rows.length > 0 && Array.isArray(columns) && columns.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <% for (var i = 0; i < columns.length; i++) { %>
+                            <th><%= columns[i] %></th>
+                        <% } %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (var ri = 0; ri < rows.length; ri++) { %>
+                        <tr>
+                            <% for (var ci = 0; ci < columns.length; ci++) { %>
+                                <td><%= rows[ri][columns[ci]] %></td>
+                            <% } %>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <% } else { %>
+            <div class="no-data">No records found in 'users' table or table does not exist.</div>
+            <% } %>
+        <% } %>
+    </div>
+</body>
+</html>
